@@ -432,7 +432,8 @@ async function loadToday(){
       const local = new Date(d.getTime() - offset * 60000);
       return local.toISOString().slice(0,10) === today;
     }).forEach(r=>{
-      todayReports[r['Рабочий ID']]={text:r['Отчёт'],time:r['Время']};
+      let timeStr=r['Время'];try{const t=new Date(timeStr);if(!isNaN(t))timeStr=t.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}catch(e){}
+      todayReports[r['Рабочий ID']]={text:r['Отчёт'],time:timeStr};
     });
     renderToday(myWorkers);
   }catch(e){
