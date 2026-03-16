@@ -6,113 +6,176 @@
 <title>Система Отчётов</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
-
 :root {
-  --bg: #f5f3ee;
-  --surface: #ffffff;
-  --surface2: #f0ede6;
-  --border: #e0dbd0;
-  --text: #1a1814;
-  --muted: #8a8478;
-  --accent: #c8402a;
-  --accent2: #2a6ec8;
-  --green: #2a8a5a;
-  --shadow: 0 2px 12px rgba(26,24,20,0.08);
+  --bg:#f5f3ee; --surface:#fff; --surface2:#f0ede6; --border:#e0dbd0;
+  --text:#1a1814; --muted:#8a8478; --accent:#c8402a; --accent2:#2a6ec8;
+  --green:#2a8a5a; --yellow:#c8960a; --shadow:0 2px 12px rgba(26,24,20,0.08);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; }
-.app { display:flex; flex-direction:column; min-height:100vh; }
-.topbar { background:var(--text); color:var(--bg); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; }
-.topbar-logo { font-family:'Syne',sans-serif; font-size:13px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; }
-.topbar-logo span { color:#c8402a; }
-.topbar-right { display:flex; align-items:center; gap:16px; }
-.topbar-user { font-size:11px; color:rgba(245,243,238,0.5); }
-.topbar-user strong { color:#f5f3ee; }
-.logout-btn { font-family:'DM Mono',monospace; font-size:11px; background:none; border:1px solid rgba(245,243,238,0.2); color:rgba(245,243,238,0.6); padding:6px 14px; cursor:pointer; border-radius:3px; transition:all 0.2s; }
-.logout-btn:hover { border-color:#c8402a; color:#c8402a; }
-.main { flex:1; padding:40px 32px; max-width:860px; margin:0 auto; width:100%; }
-.screen { display:none; animation:fadeUp 0.25s ease; }
-.screen.active { display:block; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;}
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--text);color:var(--bg);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;}
+.topbar-logo span{color:#c8402a;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-user{font-size:11px;color:rgba(245,243,238,0.5);}
+.topbar-user strong{color:#f5f3ee;}
+.logout-btn{font-family:'DM Mono',monospace;font-size:11px;background:none;border:1px solid rgba(245,243,238,0.2);color:rgba(245,243,238,0.6);padding:6px 14px;cursor:pointer;border-radius:3px;transition:all 0.2s;}
+.logout-btn:hover{border-color:#c8402a;color:#c8402a;}
+.main{flex:1;padding:40px 32px;max-width:900px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeUp 0.25s ease;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* LOGIN */
-.login-wrap { max-width:500px; margin:0 auto; padding-top:20px; }
-.login-title { font-family:'Syne',sans-serif; font-size:36px; font-weight:800; line-height:1.1; margin-bottom:6px; }
-.login-sub { color:var(--muted); font-size:12px; margin-bottom:36px; }
-.section-label { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
-.user-grid { display:grid; gap:8px; margin-bottom:8px; }
-.user-card { background:var(--surface); border:1.5px solid var(--border); border-radius:6px; padding:14px 18px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.15s; }
-.user-card:hover { border-color:var(--text); }
-.user-card.selected { border-color:var(--accent); background:rgba(200,64,42,0.04); }
-.user-card.curator-card { border-left:4px solid var(--accent); }
-.user-card.worker-card  { border-left:4px solid var(--accent2); }
-.card-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:11px; flex-shrink:0; }
-.curator-card .card-avatar { background:rgba(200,64,42,0.12); color:var(--accent); }
-.worker-card  .card-avatar { background:rgba(42,110,200,0.1);  color:var(--accent2); }
-.card-name { font-size:13px; font-weight:500; }
-.card-meta { font-size:10px; color:var(--muted); margin-top:2px; }
-.pw-section { margin-top:16px; }
-.field { margin-bottom:16px; }
-label { display:block; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
-input, textarea { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; padding:11px 14px; outline:none; transition:border-color 0.15s; }
-input:focus, textarea:focus { border-color:var(--text); }
-textarea { min-height:160px; resize:vertical; }
-.error-msg { background:rgba(200,64,42,0.08); border:1px solid rgba(200,64,42,0.25); color:var(--accent); font-size:11px; padding:10px 14px; border-radius:4px; margin-bottom:14px; display:none; }
-.btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:var(--text); color:var(--bg); font-family:'Syne',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; border:none; border-radius:6px; padding:14px; cursor:pointer; transition:all 0.15s; }
-.btn:hover { background:var(--accent); }
-.btn:disabled { opacity:0.5; cursor:not-allowed; }
-.btn.ghost { background:transparent; color:var(--muted); border:1.5px solid var(--border); margin-top:8px; font-family:'DM Mono',monospace; font-size:11px; }
-.btn.ghost:hover { border-color:var(--text); color:var(--text); background:transparent; }
-.btn.danger { background:var(--accent); }
-.btn.sm { width:auto; padding:9px 18px; font-size:10px; }
-.spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
+.login-wrap{max-width:520px;margin:0 auto;padding-top:20px;}
+.login-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;line-height:1.1;margin-bottom:6px;}
+.login-sub{color:var(--muted);font-size:12px;margin-bottom:36px;}
+.section-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.user-grid{display:grid;gap:8px;margin-bottom:8px;}
+.user-card{background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.15s;}
+.user-card:hover{border-color:var(--text);}
+.user-card.selected{border-color:var(--accent);background:rgba(200,64,42,0.04);}
+.user-card.curator-card{border-left:4px solid var(--accent);}
+.user-card.worker-card{border-left:4px solid var(--accent2);}
+.card-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;flex-shrink:0;}
+.curator-card .card-avatar{background:rgba(200,64,42,0.12);color:var(--accent);}
+.worker-card .card-avatar{background:rgba(42,110,200,0.1);color:var(--accent2);}
+.card-name{font-size:13px;font-weight:500;}
+.card-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.pw-section{margin-top:16px;}
+.field{margin-bottom:16px;}
+label{display:block;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+input,textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;padding:11px 14px;outline:none;transition:border-color 0.15s;}
+input:focus,textarea:focus{border-color:var(--text);}
+textarea{min-height:90px;resize:vertical;}
+.error-msg{background:rgba(200,64,42,0.08);border:1px solid rgba(200,64,42,0.25);color:var(--accent);font-size:11px;padding:10px 14px;border-radius:4px;margin-bottom:14px;display:none;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--text);color:var(--bg);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;border-radius:6px;padding:14px;cursor:pointer;transition:all 0.15s;}
+.btn:hover{background:var(--accent);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.btn.ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);margin-top:8px;font-family:'DM Mono',monospace;font-size:11px;}
+.btn.ghost:hover{border-color:var(--text);color:var(--text);background:transparent;}
+.btn.blue{background:var(--accent2);}
+.btn.blue:hover{background:#1a5eb8;}
+.btn.sm{width:auto;padding:9px 16px;font-size:10px;}
+.btn.green{background:var(--green);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* WORKER */
-.page-title { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; margin-bottom:4px; }
-.page-date  { font-size:11px; color:var(--muted); margin-bottom:32px; }
-.already-done { background:var(--surface); border:1.5px solid #b8e8ce; border-radius:8px; padding:24px; margin-bottom:20px; }
-.already-done h3 { color:var(--green); font-size:13px; margin-bottom:10px; }
-.already-done p  { font-size:12px; color:var(--muted); line-height:1.6; white-space:pre-wrap; }
-.success-banner { background:rgba(42,138,90,0.08); border:1px solid rgba(42,138,90,0.25); border-radius:6px; padding:20px; text-align:center; margin-bottom:20px; }
-.success-banner .tick { font-size:28px; margin-bottom:6px; }
-.success-banner p { font-size:12px; color:var(--green); }
+/* PAGE */
+.page-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px;}
+.page-date{font-size:11px;color:var(--muted);margin-bottom:28px;}
 
-/* CURATOR */
-.curator-tabs { display:flex; gap:4px; background:var(--surface2); border-radius:8px; padding:4px; margin-bottom:32px; width:fit-content; }
-.tab-btn { font-family:'DM Mono',monospace; font-size:11px; background:none; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; color:var(--muted); transition:all 0.15s; }
-.tab-btn.active { background:var(--surface); color:var(--text); font-weight:500; box-shadow:var(--shadow); }
-.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
-.stat-card { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; padding:18px 20px; }
-.stat-num { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; line-height:1; margin-bottom:4px; }
-.stat-lbl { font-size:10px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
-.report-card { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; margin-bottom:10px; overflow:hidden; }
-.report-head { display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer; }
-.dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.dot.done { background:var(--green); }
-.dot.miss { background:var(--accent); }
-.rname { font-size:13px; font-weight:500; flex:1; }
-.rtime { font-size:10px; color:var(--muted); }
-.chev { font-size:10px; color:var(--muted); transition:transform 0.2s; }
-.chev.open { transform:rotate(180deg); }
-.report-body { display:none; padding:0 18px 18px; border-top:1px solid var(--border); }
-.report-body.open { display:block; }
-.report-body-text { font-size:13px; line-height:1.7; padding-top:14px; white-space:pre-wrap; }
-.no-report-txt { font-size:12px; color:var(--muted); padding-top:14px; font-style:italic; }
-.history-filters { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
-.filter-select { font-family:'DM Mono',monospace; font-size:11px; background:var(--surface); border:1.5px solid var(--border); border-radius:6px; padding:8px 12px; color:var(--text); outline:none; cursor:pointer; }
-.history-table { width:100%; border-collapse:collapse; }
-.history-table th { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); text-align:left; padding:10px 14px; border-bottom:1.5px solid var(--border); }
-.history-table td { font-size:12px; padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
-.history-table tr:hover td { background:var(--surface2); }
-.badge { display:inline-block; font-size:10px; padding:3px 8px; border-radius:3px; font-weight:500; }
-.badge.done { background:rgba(42,138,90,0.1); color:var(--green); }
-.badge.miss { background:rgba(200,64,42,0.1); color:var(--accent); }
-.history-entry { max-width:300px; font-size:11px; line-height:1.5; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.reset-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
-.reset-bar h2 { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; }
-.loading-box { text-align:center; padding:40px; color:var(--muted); font-size:12px; }
-@media(max-width:600px){ .main{padding:24px 16px} .topbar{padding:12px 16px} .stat-num{font-size:24px} }
+/* TABS */
+.curator-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:4px;margin-bottom:28px;width:fit-content;flex-wrap:wrap;}
+.tab-btn{font-family:'DM Mono',monospace;font-size:11px;background:none;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;}
+.tab-btn.active{background:var(--surface);color:var(--text);font-weight:500;box-shadow:var(--shadow);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:16px 18px;}
+.stat-num{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+
+/* REPORT CARDS */
+.report-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
+.report-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot.done{background:var(--green);}
+.dot.partial{background:var(--yellow);}
+.dot.miss{background:var(--accent);}
+.rname{font-size:13px;font-weight:500;flex:1;}
+.rtime{font-size:10px;color:var(--muted);}
+.chev{font-size:10px;color:var(--muted);transition:transform 0.2s;}
+.chev.open{transform:rotate(180deg);}
+.report-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+.report-body.open{display:block;}
+
+/* TASK LIST curator view */
+.task-list{padding-top:14px;}
+.task-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.task-row:last-child{border-bottom:none;}
+.task-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;margin-top:1px;}
+.task-check.done{background:var(--green);border-color:var(--green);color:#fff;}
+.task-check.miss{background:rgba(200,64,42,0.08);border-color:var(--accent);}
+.task-text{font-size:12px;flex:1;}
+.task-text.done-text{text-decoration:line-through;color:var(--muted);}
+.task-progress{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.progress-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.3s;}
+
+/* LINKS display */
+.links-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.links-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.link-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(42,110,200,0.06);border:1px solid rgba(42,110,200,0.15);border-radius:5px;margin-bottom:5px;}
+.link-icon{font-size:14px;flex-shrink:0;}
+.link-name{font-size:12px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.link-open{font-size:11px;color:var(--accent2);text-decoration:none;white-space:nowrap;padding:4px 10px;border:1px solid var(--accent2);border-radius:3px;flex-shrink:0;}
+.link-open:hover{background:var(--accent2);color:#fff;}
+
+/* WORKER TASK SCREEN */
+.worker-task-item{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;}
+.worker-task-item:hover{border-color:var(--accent2);}
+.worker-task-item.checked{border-color:var(--green);background:rgba(42,138,90,0.04);}
+.wt-header{display:flex;align-items:center;gap:12px;}
+.wt-checkbox{width:22px;height:22px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;}
+.worker-task-item.checked .wt-checkbox{background:var(--green);border-color:var(--green);color:#fff;}
+.wt-text{font-size:13px;flex:1;}
+.worker-task-item.checked .wt-text{text-decoration:line-through;color:var(--muted);}
+
+/* LINKS INPUT */
+.links-input-section{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;}
+.links-input-section h4{font-size:12px;font-weight:600;margin-bottom:4px;}
+.links-input-section p{font-size:11px;color:var(--muted);margin-bottom:14px;}
+.link-add-row{display:flex;gap:8px;margin-bottom:8px;}
+.link-add-row input{flex:1;}
+.added-links{margin-top:8px;}
+.added-link-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(42,110,200,0.06);border:1px solid rgba(42,110,200,0.15);border-radius:5px;margin-bottom:5px;font-size:12px;}
+.added-link-item .link-url{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--accent2);}
+.remove-link{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0;}
+.remove-link:hover{color:var(--accent);}
+
+/* ADD TASKS curator */
+.add-task-form{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px;}
+.add-task-form h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;}
+.task-input-row{display:flex;gap:8px;margin-bottom:8px;}
+.task-input-row input{flex:1;}
+.added-tasks{margin-top:12px;}
+.added-task-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border-radius:4px;margin-bottom:4px;font-size:12px;}
+.added-task-item span{flex:1;}
+.remove-task{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;}
+.remove-task:hover{color:var(--accent);}
+
+/* WORKER SELECT */
+.worker-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:16px;}
+.worker-select-card{background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:12px 14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;}
+.worker-select-card:hover{border-color:var(--accent2);}
+.worker-select-card.selected{border-color:var(--accent2);background:rgba(42,110,200,0.04);}
+.ws-avatar{width:30px;height:30px;border-radius:50%;background:rgba(42,110,200,0.1);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:10px;flex-shrink:0;}
+.ws-name{font-size:12px;font-weight:500;}
+
+/* HISTORY */
+.history-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-select{font-family:'DM Mono',monospace;font-size:11px;background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);outline:none;cursor:pointer;}
+.history-table{width:100%;border-collapse:collapse;}
+.history-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1.5px solid var(--border);}
+.history-table td{font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.history-table tr:hover td{background:var(--surface2);}
+.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:3px;font-weight:500;}
+.badge.done{background:rgba(42,138,90,0.1);color:var(--green);}
+.badge.partial{background:rgba(200,150,10,0.1);color:var(--yellow);}
+.badge.miss{background:rgba(200,64,42,0.1);color:var(--accent);}
+.reset-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.reset-bar h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;}
+.loading-box{text-align:center;padding:40px;color:var(--muted);font-size:12px;}
+.no-tasks{text-align:center;padding:40px 20px;color:var(--muted);font-size:12px;}
+.no-tasks .icon{font-size:32px;margin-bottom:8px;}
+.success-banner{background:rgba(42,138,90,0.08);border:1px solid rgba(42,138,90,0.25);border-radius:6px;padding:20px;text-align:center;margin-bottom:20px;}
+.success-banner .tick{font-size:28px;margin-bottom:6px;}
+.success-banner p{font-size:12px;color:var(--green);}
+.hint-box{background:rgba(42,110,200,0.06);border:1px solid rgba(42,110,200,0.2);border-radius:6px;padding:12px 16px;font-size:11px;color:var(--accent2);margin-bottom:16px;line-height:1.6;}
+
+@media(max-width:600px){.main{padding:20px 14px;}.stats-row{gap:8px;}.stat-num{font-size:22px;}.tab-btn{padding:7px 10px;font-size:10px;}}
 </style>
 </head>
 <body>
@@ -139,7 +202,7 @@ textarea { min-height:160px; resize:vertical; }
         <div class="pw-section" id="pw-section" style="display:none">
           <div class="field" style="margin-top:16px">
             <label>Пароль</label>
-            <input type="password" id="pw-input" placeholder="Введите пароль..." />
+            <input type="password" id="pw-input" placeholder="Введите пароль..."/>
           </div>
           <div class="error-msg" id="login-err">Неверный пароль</div>
           <button class="btn" onclick="doLogin()">Войти</button>
@@ -148,54 +211,102 @@ textarea { min-height:160px; resize:vertical; }
       </div>
     </div>
 
-    <!-- WORKER -->
+    <!-- WORKER SCREEN -->
     <div class="screen" id="screen-worker">
       <div class="page-title" id="w-title"></div>
-      <div class="page-date"  id="w-date"></div>
-      <div id="w-form">
-        <div class="field">
-          <label>Что сделал сегодня?</label>
-          <textarea id="w-text" placeholder="Опиши подробно что было сделано за день..."></textarea>
+      <div class="page-date" id="w-date"></div>
+      <div id="w-loading" class="loading-box">Загружаем задания...</div>
+      <div id="w-no-tasks" class="no-tasks" style="display:none">
+        <div class="icon">📋</div>
+        <p>Куратор ещё не добавил задания на сегодня</p>
+      </div>
+      <div id="w-tasks-area" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="font-size:11px;color:var(--muted)" id="w-progress-label"></div>
+          <div style="display:flex;align-items:center;gap:8px;width:180px;">
+            <div class="progress-bar"><div class="progress-fill" id="w-progress-fill"></div></div>
+            <span style="font-size:10px;color:var(--muted)" id="w-pct">0%</span>
+          </div>
         </div>
-        <div class="error-msg" id="w-err">Поле не может быть пустым</div>
-        <button class="btn" id="w-submit-btn" onclick="submitReport()">Отправить отчёт →</button>
+        <div id="w-task-list" style="margin-bottom:16px;"></div>
+
+        <!-- LINKS SECTION -->
+        <div class="links-input-section">
+          <h4>📎 Прикрепить ссылки на документы</h4>
+          <p>Загрузи документ в Google Drive, скопируй ссылку и вставь сюда</p>
+          <div class="link-add-row">
+            <input type="text" id="link-name-input" placeholder="Название документа..." style="flex:0.4;min-width:120px;"/>
+            <input type="url" id="link-url-input" placeholder="https://drive.google.com/..."/>
+            <button class="btn blue sm" onclick="addLink()">+ Добавить</button>
+          </div>
+          <div class="added-links" id="added-links"></div>
+        </div>
+
+        <div class="field">
+          <label>Комментарий (необязательно)</label>
+          <textarea id="w-comment" placeholder="Дополнительный комментарий..."></textarea>
+        </div>
+        <button class="btn" id="w-submit-btn" onclick="submitWorkerTasks()">Отправить отчёт →</button>
       </div>
       <div id="w-done" style="display:none">
-        <div class="success-banner"><div class="tick">✓</div><p>Отчёт принят. Куратор получит его вместе с остальными.</p></div>
-        <div class="already-done"><h3>Твой отчёт за сегодня:</h3><p id="w-done-text"></p></div>
+        <div class="success-banner"><div class="tick">✓</div><p>Отчёт отправлен куратору.</p></div>
+        <div id="w-done-summary"></div>
         <button class="btn ghost" onclick="logout()">Выйти из системы</button>
       </div>
     </div>
 
-    <!-- CURATOR -->
+    <!-- CURATOR SCREEN -->
     <div class="screen" id="screen-curator">
-      <div style="margin-bottom:28px">
+      <div style="margin-bottom:24px">
         <div class="page-title" id="c-title"></div>
-        <div class="page-date"  id="c-date"></div>
+        <div class="page-date" id="c-date"></div>
       </div>
       <div class="curator-tabs">
         <button class="tab-btn active" onclick="switchTab('today')">Сегодня</button>
-        <button class="tab-btn"        onclick="switchTab('history')">История 30 дней</button>
+        <button class="tab-btn" onclick="switchTab('tasks')">Задать задания</button>
+        <button class="tab-btn" onclick="switchTab('history')">История 30 дней</button>
       </div>
+
+      <!-- TODAY -->
       <div id="tab-today">
         <div class="stats-row" id="c-stats"></div>
         <div id="c-reports"></div>
       </div>
-      <div id="tab-history" style="display:none">
-        <div class="reset-bar">
-          <h2>История за 30 дней</h2>
+
+      <!-- TASKS -->
+      <div id="tab-tasks" style="display:none">
+        <div class="add-task-form">
+          <h3>Задания на сегодня</h3>
+          <div class="section-label" style="margin-bottom:10px">Выберите рабочего</div>
+          <div class="worker-select-grid" id="task-worker-grid"></div>
+          <div id="task-input-area" style="display:none">
+            <div class="section-label" style="margin:16px 0 10px">Список заданий (до 15)</div>
+            <div class="task-input-row">
+              <input type="text" id="task-input" placeholder="Введите задание..."/>
+              <button class="btn blue sm" onclick="addTask()">+ Добавить</button>
+            </div>
+            <div class="added-tasks" id="added-tasks"></div>
+            <div class="error-msg" id="task-err" style="margin-top:8px">Введите хотя бы одно задание</div>
+            <button class="btn" id="save-tasks-btn" style="margin-top:16px" onclick="saveTasks()">Сохранить задания →</button>
+          </div>
         </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div id="tab-history" style="display:none">
+        <div class="reset-bar"><h2>История за 30 дней</h2></div>
         <div class="history-filters">
           <select class="filter-select" id="hist-worker" onchange="renderHistory()"><option value="">Все рабочие</option></select>
           <select class="filter-select" id="hist-status" onchange="renderHistory()">
             <option value="">Все статусы</option>
-            <option value="done">Сдал</option>
+            <option value="done">Всё выполнено</option>
+            <option value="partial">Частично</option>
             <option value="miss">Не сдал</option>
           </select>
         </div>
         <div style="overflow-x:auto">
           <table class="history-table">
-            <thead><tr><th>Дата</th><th>Рабочий</th><th>Статус</th><th>Отчёт</th></tr></thead>
+            <thead><tr><th>Дата</th><th>Рабочий</th><th>Статус</th><th>Выполнено</th><th>Документы</th><th>Комментарий</th></tr></thead>
             <tbody id="hist-tbody"></tbody>
           </table>
         </div>
@@ -206,83 +317,58 @@ textarea { min-height:160px; resize:vertical; }
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyumtc5OrYXgiltiFhkSexcRtKJmPJPpBMlcQwxhfUjhUhhNBW4TEUCfPuHJKGhHTEInA/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwmkksfduf0-dhy_AhScQ26mIKg2x8uTaxRyuezpKXDsCxcswO5Gn3LFdlK3CW9lS_pRQ/exec';
 
-const CURATORS = [
-  { id:'c1', name:'Karimov Ibrohim',    initials:'K.I', password:'kur1pass' },
-  { id:'c2', name:'Ismailov Mustaqim',  initials:'I.M', password:'kur2pass' },
-  { id:'c3', name:'Boltaboyev Shuhrat', initials:'B.S', password:'kur3pass' },
-  { id:'c4', name:'Muhammedov Dilshod', initials:'M.D', password:'kur4pass' },
+const CURATORS=[
+  {id:'c1',name:'Karimov Ibrohim',   initials:'K.I',password:'kur1pass'},
+  {id:'c2',name:'Ismailov Mustaqim', initials:'I.M',password:'kur2pass'},
+  {id:'c3',name:'Boltaboyev Shuhrat',initials:'B.S',password:'kur3pass'},
+  {id:'c4',name:'Muhammedov Dilshod',initials:'M.D',password:'kur4pass'},
+];
+const WORKERS=[
+  {id:'w1', name:'Nigmanova Shaxlo',     initials:'N.S',curatorId:'c1',password:'ns001'},
+  {id:'w2', name:'Orzikulova Sevinch',    initials:'O.S',curatorId:'c1',password:'os002'},
+  {id:'w3', name:'Suleymanov Marlen',     initials:'S.M',curatorId:'c1',password:'sm003'},
+  {id:'w4', name:'Shodmonqulova Charos',  initials:'S.C',curatorId:'c1',password:'sc004'},
+  {id:'w5', name:'Saydazimov Sarvar',     initials:'S.S',curatorId:'c1',password:'ss005'},
+  {id:'w6', name:'Xolmatov Muhammadsolix',initials:'X.M',curatorId:'c2',password:'xm006'},
+  {id:'w7', name:'Baxtiyorov Mahammadali',initials:'B.M',curatorId:'c2',password:'bm007'},
+  {id:'w8', name:'Samieva Nozima',        initials:'S.N',curatorId:'c2',password:'sn008'},
+  {id:'w9', name:'Murodjonova Nargizaxon',initials:'M.N',curatorId:'c2',password:'mn009'},
+  {id:'w10',name:'Abduxalimov Nurshodbek',initials:'A.N',curatorId:'c2',password:'an010'},
+  {id:'w11',name:'Baxtiyorov Yahyo',      initials:'B.Y',curatorId:'c3',password:'by011'},
+  {id:'w12',name:'Elbaev Azamat',         initials:'E.A',curatorId:'c3',password:'ea012'},
+  {id:'w13',name:'Isajanova Iroda',       initials:'I.I',curatorId:'c3',password:'ii013'},
+  {id:'w14',name:'Xujaniyozov Xayrulla',  initials:'X.X',curatorId:'c4',password:'xx014'},
+  {id:'w15',name:'Xoliqov Shoxjaxon',     initials:'X.S',curatorId:'c4',password:'xs015'},
+  {id:'w16',name:'Kunduzov Shaxzodbek',   initials:'K.S',curatorId:'c4',password:'ks016'},
 ];
 
-const WORKERS = [
-  { id:'w1',  name:'Nigmanova Shaxlo',      initials:'N.S', curatorId:'c1', password:'ns001' },
-  { id:'w2',  name:'Orzikulova Sevinch',     initials:'O.S', curatorId:'c1', password:'os002' },
-  { id:'w3',  name:'Suleymanov Marlen',      initials:'S.M', curatorId:'c1', password:'sm003' },
-  { id:'w4',  name:'Shodmonqulova Charos',   initials:'S.C', curatorId:'c1', password:'sc004' },
-  { id:'w5',  name:'Saydazimov Sarvar',      initials:'S.S', curatorId:'c1', password:'ss005' },
-  { id:'w6',  name:'Xolmatov Muhammadsolix', initials:'X.M', curatorId:'c2', password:'xm006' },
-  { id:'w7',  name:'Baxtiyorov Mahammadali', initials:'B.M', curatorId:'c2', password:'bm007' },
-  { id:'w8',  name:'Samieva Nozima',         initials:'S.N', curatorId:'c2', password:'sn008' },
-  { id:'w9',  name:'Murodjonova Nargizaxon', initials:'M.N', curatorId:'c2', password:'mn009' },
-  { id:'w10', name:'Abduxalimov Nurshodbek', initials:'A.N', curatorId:'c2', password:'an010' },
-  { id:'w11', name:'Baxtiyorov Yahyo',       initials:'B.Y', curatorId:'c3', password:'by011' },
-  { id:'w12', name:'Elbaev Azamat',          initials:'E.A', curatorId:'c3', password:'ea012' },
-  { id:'w13', name:'Isajanova Iroda',        initials:'I.I', curatorId:'c3', password:'ii013' },
-  { id:'w14', name:'Xujaniyozov Xayrulla',   initials:'X.X', curatorId:'c4', password:'xx014' },
-  { id:'w15', name:'Xoliqov Shoxjaxon',      initials:'X.S', curatorId:'c4', password:'xs015' },
-  { id:'w16', name:'Kunduzov Shaxzodbek',    initials:'K.S', curatorId:'c4', password:'ks016' },
-];
+let currentUser=null,selectedId=null,todayData={},historyRows=[],currentTasks=[],selectedWorkerForTask=null,workerLinks=[];
 
-let currentUser  = null;
-let selectedId   = null;
-let todayReports = {};
-let historyRows  = [];
+function todayKey(){const d=new Date();const off=d.getTimezoneOffset();const loc=new Date(d.getTime()-off*60000);return loc.toISOString().slice(0,10);}
+function todayLabel(){return new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}
+function getLast30Keys(){const keys=[];for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);const off=d.getTimezoneOffset();const loc=new Date(d.getTime()-off*60000);keys.push(loc.toISOString().slice(0,10));}return keys;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+function fixDate(raw){try{const d=new Date(raw);const off=d.getTimezoneOffset();const loc=new Date(d.getTime()-off*60000);return loc.toISOString().slice(0,10);}catch{return String(raw).slice(0,10);}}
 
-function todayKey() {
-  const d = new Date();
-  const offset = d.getTimezoneOffset();
-  const local = new Date(d.getTime() - offset * 60000);
-  return local.toISOString().slice(0, 10);
-}
-function todayLabel() {
-  return new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-}
-function getLast30Keys() {
-  const keys=[];
-  for(let i=0;i<30;i++){
-    const d=new Date(); d.setDate(d.getDate()-i);
-    keys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-  }
-  return keys;
-}
-function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+async function fetchSheets(curatorId){const res=await fetch(`${SCRIPT_URL}?curatorId=${curatorId}&t=${Date.now()}`);const json=await res.json();return json.rows||[];}
+async function postSheets(payload){const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});return await res.json();}
 
 // INIT
 (function(){
-  const cList=document.getElementById('curator-list');
-  CURATORS.forEach(c=>cList.appendChild(makeCard(c,'curator')));
-  const wList=document.getElementById('worker-list');
-  WORKERS.forEach(w=>{
-    const cur=CURATORS.find(c=>c.id===w.curatorId);
-    wList.appendChild(makeCard(w,'worker',cur?cur.name:''));
-  });
+  const cL=document.getElementById('curator-list');
+  CURATORS.forEach(c=>cL.appendChild(makeLoginCard(c,'curator')));
+  const wL=document.getElementById('worker-list');
+  WORKERS.forEach(w=>{const cur=CURATORS.find(c=>c.id===w.curatorId);wL.appendChild(makeLoginCard(w,'worker',cur?cur.name:''));});
 })();
 
-function makeCard(user,role,curatorName){
+function makeLoginCard(user,role,curatorName){
   const div=document.createElement('div');
-  div.className=`user-card ${role}-card`;
-  div.id=`card-${user.id}`;
-  div.innerHTML=`
-    <div class="card-avatar">${user.initials}</div>
-    <div class="card-info">
-      <div class="card-name">${user.name}</div>
-      <div class="card-meta">${role==='curator'?'Куратор':'Рабочий · '+curatorName}</div>
-    </div>`;
-  div.onclick=()=>selectCard(user.id);
-  return div;
+  div.className=`user-card ${role}-card`;div.id=`card-${user.id}`;
+  div.innerHTML=`<div class="card-avatar">${user.initials}</div><div class="card-info"><div class="card-name">${user.name}</div><div class="card-meta">${role==='curator'?'Куратор':'Рабочий · '+curatorName}</div></div>`;
+  div.onclick=()=>selectCard(user.id);return div;
 }
-
 function selectCard(id){
   selectedId=id;
   document.querySelectorAll('.user-card').forEach(c=>c.classList.remove('selected'));
@@ -298,236 +384,325 @@ function cancelLogin(){
   document.getElementById('pw-section').style.display='none';
 }
 document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-
 function doLogin(){
   const pw=document.getElementById('pw-input').value;
   const err=document.getElementById('login-err');
-  let user=CURATORS.find(c=>c.id===selectedId&&c.password===pw);
-  let role='curator';
+  let user=CURATORS.find(c=>c.id===selectedId&&c.password===pw);let role='curator';
   if(!user){user=WORKERS.find(w=>w.id===selectedId&&w.password===pw);role='worker';}
   if(!user){err.style.display='block';return;}
-  err.style.display='none';
-  currentUser={...user,role};
+  err.style.display='none';currentUser={...user,role};
   document.getElementById('topbar-user').style.display='block';
   document.getElementById('topbar-user').innerHTML=`Вошёл: <strong>${user.name}</strong>`;
   document.getElementById('logout-btn').style.display='block';
-  if(role==='curator') showCurator();
-  else showWorker();
+  if(role==='curator')showCurator();else showWorker();
 }
-
 function logout(){
-  currentUser=null; selectedId=null; todayReports={}; historyRows=[];
+  currentUser=null;selectedId=null;todayData={};historyRows=[];currentTasks=[];selectedWorkerForTask=null;workerLinks=[];
   document.getElementById('topbar-user').style.display='none';
   document.getElementById('logout-btn').style.display='none';
-  cancelLogin();
-  showScreen('screen-login');
+  cancelLogin();showScreen('screen-login');
 }
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-// API
-async function fetchSheets(curatorId){
-  const res=await fetch(`${SCRIPT_URL}?curatorId=${curatorId}&t=${Date.now()}`);
-  const json=await res.json();
-  return json.rows||[];
-}
-async function postSheets(payload){
-  const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
-  return await res.json();
-}
-
-// WORKER
+// ── WORKER ──────────────────────────────────────────────────────
 async function showWorker(){
   document.getElementById('w-title').textContent=currentUser.name;
   document.getElementById('w-date').textContent=todayLabel();
-  document.getElementById('w-form').style.display='block';
+  document.getElementById('w-loading').style.display='block';
+  document.getElementById('w-no-tasks').style.display='none';
+  document.getElementById('w-tasks-area').style.display='none';
   document.getElementById('w-done').style.display='none';
-  document.getElementById('w-text').value='';
+  workerLinks=[];
+  document.getElementById('added-links').innerHTML='';
   showScreen('screen-worker');
-  const btn=document.getElementById('w-submit-btn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span> Проверяем...';
   try{
     const rows=await fetchSheets(currentUser.curatorId);
     const today=todayKey();
-    const existing=rows.find(r=>r['Рабочий ID']===currentUser.id&&String(r['Дата'])===today);
-    if(existing){
-      document.getElementById('w-form').style.display='none';
-      document.getElementById('w-done').style.display='block';
-      document.getElementById('w-done-text').textContent=existing['Отчёт'];
-    } else {
-      btn.disabled=false;
-      btn.innerHTML='Отправить отчёт →';
-    }
-  }catch(e){
-    btn.disabled=false;
-    btn.innerHTML='Отправить отчёт →';
+    const submitted=rows.find(r=>r['Тип']==='report'&&r['Рабочий ID']===currentUser.id&&fixDate(r['Дата'])===today);
+    if(submitted){showWorkerDone(JSON.parse(submitted['Данные']||'{}'));return;}
+    const taskRow=rows.find(r=>r['Тип']==='tasks'&&r['Рабочий ID']===currentUser.id&&fixDate(r['Дата'])===today);
+    document.getElementById('w-loading').style.display='none';
+    if(!taskRow){document.getElementById('w-no-tasks').style.display='block';return;}
+    const tasks=JSON.parse(taskRow['Данные']||'[]');
+    if(!tasks.length){document.getElementById('w-no-tasks').style.display='block';return;}
+    renderWorkerTasks(tasks);
+  }catch{
+    document.getElementById('w-loading').style.display='none';
+    document.getElementById('w-no-tasks').innerHTML='<div class="icon">⚠️</div><p>Ошибка загрузки. Проверь интернет.</p>';
+    document.getElementById('w-no-tasks').style.display='block';
   }
 }
 
-async function submitReport(){
-  const text=document.getElementById('w-text').value.trim();
-  if(!text){document.getElementById('w-err').style.display='block';return;}
-  document.getElementById('w-err').style.display='none';
+function renderWorkerTasks(tasks){
+  const list=document.getElementById('w-task-list');list.innerHTML='';
+  tasks.forEach((task,i)=>{
+    const item=document.createElement('div');
+    item.className='worker-task-item'+(task.done?' checked':'');item.id=`wt-${i}`;
+    item.innerHTML=`<div class="wt-header" onclick="toggleWorkerTask(${i})"><div class="wt-checkbox">${task.done?'✓':''}</div><div class="wt-text">${esc(task.text)}</div></div>`;
+    list.appendChild(item);
+  });
+  updateWorkerProgress(tasks);
+  document.getElementById('w-tasks-area').style.display='block';
+  window._workerTasks=tasks.map(t=>({...t}));
+}
+function toggleWorkerTask(i){
+  window._workerTasks[i].done=!window._workerTasks[i].done;
+  const item=document.getElementById(`wt-${i}`);
+  item.classList.toggle('checked',window._workerTasks[i].done);
+  item.querySelector('.wt-checkbox').textContent=window._workerTasks[i].done?'✓':'';
+  item.querySelector('.wt-text').classList.toggle('done-text',window._workerTasks[i].done);
+  updateWorkerProgress(window._workerTasks);
+}
+function updateWorkerProgress(tasks){
+  const done=tasks.filter(t=>t.done).length,total=tasks.length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('w-progress-label').textContent=`Выполнено: ${done} из ${total}`;
+  document.getElementById('w-progress-fill').style.width=pct+'%';
+  document.getElementById('w-pct').textContent=pct+'%';
+}
+
+// LINKS
+function addLink(){
+  const nameEl=document.getElementById('link-name-input');
+  const urlEl=document.getElementById('link-url-input');
+  const name=nameEl.value.trim();
+  const url=urlEl.value.trim();
+  if(!url) return;
+  const label=name||url;
+  workerLinks.push({name:label,url});
+  nameEl.value='';urlEl.value='';
+  renderWorkerLinks();
+}
+function removeLink(i){workerLinks.splice(i,1);renderWorkerLinks();}
+function renderWorkerLinks(){
+  const container=document.getElementById('added-links');container.innerHTML='';
+  workerLinks.forEach((l,i)=>{
+    const div=document.createElement('div');div.className='added-link-item';
+    div.innerHTML=`<span>🔗</span><span class="link-url">${esc(l.name)}</span><button class="remove-link" onclick="removeLink(${i})">✕</button>`;
+    container.appendChild(div);
+  });
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const active=document.activeElement;
+    if(active===document.getElementById('link-url-input')||active===document.getElementById('link-name-input')) addLink();
+    if(active===document.getElementById('task-input')) addTask();
+  }
+});
+
+async function submitWorkerTasks(){
+  const tasks=window._workerTasks||[];
+  const comment=document.getElementById('w-comment').value.trim();
   const btn=document.getElementById('w-submit-btn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span> Отправляем...';
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Отправляем...';
   const now=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const done=tasks.filter(t=>t.done).length;
   try{
     const res=await postSheets({
-      curatorId:currentUser.curatorId,
-      workerId:currentUser.id,
-      workerName:currentUser.name,
-      date:todayKey(),
-      time:now,
-      text:text
+      type:'report',curatorId:currentUser.curatorId,
+      workerId:currentUser.id,workerName:currentUser.name,
+      date:todayKey(),time:now,
+      data:JSON.stringify({tasks,comment,links:workerLinks,done,total:tasks.length})
     });
     if(res.status==='ok'){
-      document.getElementById('w-form').style.display='none';
-      document.getElementById('w-done').style.display='block';
-      document.getElementById('w-done-text').textContent=text;
-    } else {
-      alert('Ошибка отправки. Попробуй ещё раз.');
-      btn.disabled=false;
-      btn.innerHTML='Отправить отчёт →';
-    }
-  }catch(e){
-    alert('Нет соединения. Проверь интернет.');
-    btn.disabled=false;
-    btn.innerHTML='Отправить отчёт →';
-  }
+      showWorkerDone({tasks,comment,links:workerLinks,done,total:tasks.length});
+    }else{alert('Ошибка. Попробуй ещё раз.');btn.disabled=false;btn.innerHTML='Отправить отчёт →';}
+  }catch{alert('Нет соединения.');btn.disabled=false;btn.innerHTML='Отправить отчёт →';}
 }
 
-// CURATOR
+function showWorkerDone(data){
+  document.getElementById('w-loading').style.display='none';
+  document.getElementById('w-tasks-area').style.display='none';
+  document.getElementById('w-no-tasks').style.display='none';
+  document.getElementById('w-done').style.display='block';
+  const tasks=data.tasks||[];const done=tasks.filter(t=>t.done).length;const total=tasks.length;
+  let html=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Выполнено ${done} из ${total}</div>`;
+  tasks.forEach(t=>{html+=`<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="color:${t.done?'var(--green)':'var(--accent)'}">${t.done?'✓':'✗'}</span><span style="${t.done?'':'color:var(--muted)'}">${esc(t.text)}</span></div>`;});
+  if(data.links&&data.links.length){
+    html+=`<div style="margin-top:12px;font-size:11px;color:var(--muted);margin-bottom:6px;">Документы:</div>`;
+    data.links.forEach(l=>{html+=`<div style="font-size:11px;color:var(--accent2);">🔗 <a href="${esc(l.url)}" target="_blank" style="color:var(--accent2)">${esc(l.name)}</a></div>`;});
+  }
+  if(data.comment)html+=`<div style="font-size:11px;color:var(--accent2);margin-top:10px;">💬 ${esc(data.comment)}</div>`;
+  html+='</div>';
+  document.getElementById('w-done-summary').innerHTML=html;
+}
+
+// ── CURATOR ──────────────────────────────────────────────────────
 async function showCurator(){
   document.getElementById('c-title').textContent=currentUser.name;
   document.getElementById('c-date').textContent=todayLabel();
-  showScreen('screen-curator');
-  switchTab('today');
+  showScreen('screen-curator');switchTab('today');
 }
-
 function switchTab(tab){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active',(i===0&&tab==='today')||(i===1&&tab==='history'));
-  });
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',(i===0&&tab==='today')||(i===1&&tab==='tasks')||(i===2&&tab==='history'));});
   document.getElementById('tab-today').style.display=tab==='today'?'block':'none';
+  document.getElementById('tab-tasks').style.display=tab==='tasks'?'block':'none';
   document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
-  if(tab==='today') loadToday();
-  if(tab==='history') loadHistory();
+  if(tab==='today')loadToday();
+  if(tab==='tasks')setupTasksTab();
+  if(tab==='history')loadHistory();
 }
 
 async function loadToday(){
   const myWorkers=WORKERS.filter(w=>w.curatorId===currentUser.id);
-  document.getElementById('c-stats').innerHTML='<div class="loading-box">Загружаем данные...</div>';
+  document.getElementById('c-stats').innerHTML='<div class="loading-box" style="grid-column:1/-1">Загружаем...</div>';
   document.getElementById('c-reports').innerHTML='';
   try{
     const rows=await fetchSheets(currentUser.id);
-    const today=todayKey();
-    todayReports={};
-    rows.filter(r=>{
-      const d = new Date(r['Дата']);
-      const offset = d.getTimezoneOffset();
-      const local = new Date(d.getTime() - offset * 60000);
-      return local.toISOString().slice(0,10) === today;
-    }).forEach(r=>{
-      let timeStr=r['Время'];try{const t=new Date(timeStr);if(!isNaN(t))timeStr=t.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}catch(e){}
-      todayReports[r['Рабочий ID']]={text:r['Отчёт'],time:timeStr};
+    const today=todayKey();todayData={};
+    rows.filter(r=>r['Тип']==='report'&&fixDate(r['Дата'])===today).forEach(r=>{
+      let timeStr=r['Время'];
+      try{const t=new Date(timeStr);if(!isNaN(t))timeStr=t.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}catch{}
+      todayData[r['Рабочий ID']]={data:JSON.parse(r['Данные']||'{}'),time:timeStr};
     });
     renderToday(myWorkers);
-  }catch(e){
-    document.getElementById('c-stats').innerHTML='<div class="loading-box" style="color:var(--accent)">Ошибка загрузки. Проверь соединение.</div>';
-  }
+  }catch{document.getElementById('c-stats').innerHTML='<div class="loading-box" style="grid-column:1/-1;color:var(--accent)">Ошибка загрузки</div>';}
 }
 
 function renderToday(myWorkers){
-  const submitted=myWorkers.filter(w=>todayReports[w.id]);
-  const missing=myWorkers.filter(w=>!todayReports[w.id]);
+  const submitted=myWorkers.filter(w=>todayData[w.id]);
+  const allDone=submitted.filter(w=>{const d=todayData[w.id].data;return d.done===d.total&&d.total>0;});
+  const missing=myWorkers.filter(w=>!todayData[w.id]);
   document.getElementById('c-stats').innerHTML=`
     <div class="stat-card"><div class="stat-num">${myWorkers.length}</div><div class="stat-lbl">Рабочих</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${submitted.length}</div><div class="stat-lbl">Сдали</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${allDone.length}</div><div class="stat-lbl">Всё выполнено</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${missing.length}</div><div class="stat-lbl">Не сдали</div></div>`;
-  const container=document.getElementById('c-reports');
-  container.innerHTML='';
+  const container=document.getElementById('c-reports');container.innerHTML='';
   myWorkers.forEach(w=>{
-    const r=todayReports[w.id];
-    const div=document.createElement('div');
-    div.className='report-card';
+    const entry=todayData[w.id];
+    const div=document.createElement('div');div.className='report-card';
+    let dotClass='miss',statusText='Не сдал',bodyHtml='<div style="padding-top:14px;font-size:12px;color:var(--muted);font-style:italic;">Отчёт ещё не поступил.</div>';
+    if(entry){
+      const d=entry.data;const done=d.done||0,total=d.total||0;
+      const pct=total?Math.round(done/total*100):0;
+      dotClass=done===total&&total>0?'done':done>0?'partial':'miss';
+      statusText=`✓ ${entry.time} · ${done}/${total} заданий`;
+      let tasksHtml='<div class="task-list">';
+      (d.tasks||[]).forEach(t=>{tasksHtml+=`<div class="task-row"><div class="task-check ${t.done?'done':'miss'}">${t.done?'✓':'✗'}</div><div class="task-text ${t.done?'done-text':''}">${esc(t.text)}</div></div>`;});
+      tasksHtml+=`</div><div class="task-progress"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><span style="font-size:10px;color:var(--muted);white-space:nowrap">${pct}%</span></div>`;
+      // links
+      if(d.links&&d.links.length){
+        tasksHtml+=`<div class="links-section"><div class="links-label">Прикреплённые документы</div>`;
+        d.links.forEach(l=>{tasksHtml+=`<div class="link-item"><span class="link-icon">🔗</span><span class="link-name">${esc(l.name)}</span><a class="link-open" href="${esc(l.url)}" target="_blank">Открыть →</a></div>`;});
+        tasksHtml+='</div>';
+      }
+      if(d.comment)tasksHtml+=`<div style="margin-top:10px;font-size:11px;color:var(--accent2);">💬 ${esc(d.comment)}</div>`;
+      bodyHtml=tasksHtml;
+    }
     div.innerHTML=`
       <div class="report-head" onclick="toggleBody('rb-${w.id}','chev-${w.id}')">
-        <div class="dot ${r?'done':'miss'}"></div>
+        <div class="dot ${dotClass}"></div>
         <div class="rname">${w.initials} · ${w.name}</div>
-        <div class="rtime">${r?'✓ '+r.time:'Не сдал'}</div>
+        <div class="rtime">${statusText}</div>
         <div class="chev" id="chev-${w.id}">▼</div>
       </div>
-      <div class="report-body" id="rb-${w.id}">
-        ${r?`<div class="report-body-text">${esc(r.text)}</div>`:`<div class="no-report-txt">Отчёт ещё не поступил.</div>`}
-      </div>`;
+      <div class="report-body" id="rb-${w.id}">${bodyHtml}</div>`;
     container.appendChild(div);
   });
 }
-
 function toggleBody(bodyId,chevId){
-  const body=document.getElementById(bodyId);
-  const chev=document.getElementById(chevId);
-  const open=body.classList.toggle('open');
-  if(chev)chev.classList.toggle('open',open);
+  const body=document.getElementById(bodyId);const chev=document.getElementById(chevId);
+  const open=body.classList.toggle('open');if(chev)chev.classList.toggle('open',open);
 }
 
-async function loadHistory(){
-  document.getElementById('hist-tbody').innerHTML='<tr><td colspan="4" class="loading-box">Загружаем историю...</td></tr>';
+// TASKS TAB
+function setupTasksTab(){
   const myWorkers=WORKERS.filter(w=>w.curatorId===currentUser.id);
-  const sel=document.getElementById('hist-worker');
-  sel.innerHTML='<option value="">Все рабочие</option>';
+  const grid=document.getElementById('task-worker-grid');grid.innerHTML='';
   myWorkers.forEach(w=>{
-    const o=document.createElement('option');
-    o.value=w.id; o.textContent=`${w.initials} · ${w.name}`;
-    sel.appendChild(o);
+    const card=document.createElement('div');card.className='worker-select-card';card.id=`ws-${w.id}`;
+    card.innerHTML=`<div class="ws-avatar">${w.initials}</div><div class="ws-name">${w.name}</div>`;
+    card.onclick=()=>selectWorkerForTask(w.id);grid.appendChild(card);
   });
+  currentTasks=[];selectedWorkerForTask=null;
+  document.getElementById('task-input-area').style.display='none';
+  document.getElementById('added-tasks').innerHTML='';
+}
+function selectWorkerForTask(id){
+  selectedWorkerForTask=id;
+  document.querySelectorAll('.worker-select-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(`ws-${id}`).classList.add('selected');
+  document.getElementById('task-input-area').style.display='block';
+  currentTasks=[];renderAddedTasks();
+  document.getElementById('task-input').focus();
+}
+function addTask(){
+  const input=document.getElementById('task-input');const text=input.value.trim();
+  if(!text||currentTasks.length>=15)return;
+  currentTasks.push(text);input.value='';renderAddedTasks();input.focus();
+}
+function removeTask(i){currentTasks.splice(i,1);renderAddedTasks();}
+function renderAddedTasks(){
+  const container=document.getElementById('added-tasks');container.innerHTML='';
+  currentTasks.forEach((t,i)=>{
+    const div=document.createElement('div');div.className='added-task-item';
+    div.innerHTML=`<span>${i+1}. ${esc(t)}</span><button class="remove-task" onclick="removeTask(${i})">✕</button>`;
+    container.appendChild(div);
+  });
+  document.getElementById('save-tasks-btn').textContent=`Сохранить задания (${currentTasks.length}) →`;
+}
+async function saveTasks(){
+  if(!currentTasks.length){document.getElementById('task-err').style.display='block';return;}
+  document.getElementById('task-err').style.display='none';
+  const btn=document.getElementById('save-tasks-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Сохраняем...';
+  const worker=WORKERS.find(w=>w.id===selectedWorkerForTask);
   try{
-    historyRows=await fetchSheets(currentUser.id);
-    renderHistory();
-  }catch(e){
-    document.getElementById('hist-tbody').innerHTML='<tr><td colspan="4" style="color:var(--accent);text-align:center;padding:24px">Ошибка загрузки</td></tr>';
-  }
+    const res=await postSheets({
+      type:'tasks',curatorId:currentUser.id,
+      workerId:selectedWorkerForTask,workerName:worker?worker.name:'',
+      date:todayKey(),time:'',
+      data:JSON.stringify(currentTasks.map(t=>({text:t,done:false})))
+    });
+    if(res.status==='ok'){
+      btn.innerHTML='✓ Задания сохранены!';btn.style.background='var(--green)';
+      currentTasks=[];renderAddedTasks();
+      setTimeout(()=>{btn.disabled=false;btn.innerHTML='Сохранить задания (0) →';btn.style.background='';},2500);
+    }else{alert('Ошибка.');btn.disabled=false;btn.innerHTML=`Сохранить задания (${currentTasks.length}) →`;}
+  }catch{alert('Нет соединения.');btn.disabled=false;btn.innerHTML=`Сохранить задания (${currentTasks.length}) →`;}
 }
 
+// HISTORY
+async function loadHistory(){
+  document.getElementById('hist-tbody').innerHTML='<tr><td colspan="6" class="loading-box">Загружаем...</td></tr>';
+  const myWorkers=WORKERS.filter(w=>w.curatorId===currentUser.id);
+  const sel=document.getElementById('hist-worker');sel.innerHTML='<option value="">Все рабочие</option>';
+  myWorkers.forEach(w=>{const o=document.createElement('option');o.value=w.id;o.textContent=`${w.initials} · ${w.name}`;sel.appendChild(o);});
+  try{historyRows=await fetchSheets(currentUser.id);renderHistory();}
+  catch{document.getElementById('hist-tbody').innerHTML='<tr><td colspan="6" style="color:var(--accent);text-align:center;padding:24px">Ошибка загрузки</td></tr>';}
+}
 function renderHistory(){
   const myWorkers=WORKERS.filter(w=>w.curatorId===currentUser.id);
-  const workerFilter=document.getElementById('hist-worker').value;
-  const statusFilter=document.getElementById('hist-status').value;
+  const wf=document.getElementById('hist-worker').value;
+  const sf=document.getElementById('hist-status').value;
   const last30=getLast30Keys();
-  const tbody=document.getElementById('hist-tbody');
-  tbody.innerHTML='';
+  const tbody=document.getElementById('hist-tbody');tbody.innerHTML='';
   const lookup={};
-  historyRows.forEach(r=>{
-    const d = new Date(r['Дата']);
-    const offset = d.getTimezoneOffset();
-    const local = new Date(d.getTime() - offset * 60000);
-    const dateKey = local.toISOString().slice(0,10);
-    lookup[`${dateKey}_${r['Рабочий ID']}`]=r;
-  });
+  historyRows.filter(r=>r['Тип']==='report').forEach(r=>{lookup[`${fixDate(r['Дата'])}_${r['Рабочий ID']}`]=r;});
   last30.forEach(dateKey=>{
     const dateLabel=new Date(dateKey+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
     myWorkers.forEach(w=>{
-      if(workerFilter&&w.id!==workerFilter)return;
+      if(wf&&w.id!==wf)return;
       const r=lookup[`${dateKey}_${w.id}`];
-      const status=r?'done':'miss';
-      if(statusFilter&&status!==statusFilter)return;
       if(!r&&dateKey===todayKey())return;
+      let status='miss',doneCount=0,totalCount=0,comment='',links=[];
+      if(r){
+        try{const d=JSON.parse(r['Данные']||'{}');doneCount=d.done||0;totalCount=d.total||0;comment=d.comment||'';links=d.links||[];status=doneCount===totalCount&&totalCount>0?'done':doneCount>0?'partial':'miss';}catch{}
+      }
+      if(sf&&status!==sf)return;
+      const linksHtml=links.length?links.map(l=>`<a href="${esc(l.url)}" target="_blank" style="color:var(--accent2);font-size:11px;display:block;">🔗 ${esc(l.name)}</a>`).join(''):'—';
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td>${dateLabel}</td>
         <td>${w.initials} · ${w.name}</td>
-        <td><span class="badge ${status}">${r?'Сдал':'Не сдал'}</span></td>
-        <td><div class="history-entry">${r?esc(r['Отчёт']):'—'}</div></td>`;
+        <td><span class="badge ${status}">${status==='done'?'Всё выполнено':status==='partial'?'Частично':'Не сдал'}</span></td>
+        <td>${r?`${doneCount}/${totalCount}`:'—'}</td>
+        <td>${linksHtml}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${comment||'—'}</td>`;
       tbody.appendChild(tr);
     });
   });
-  if(!tbody.children.length){
-    tbody.innerHTML='<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:24px">Нет данных</td></tr>';
-  }
+  if(!tbody.children.length)tbody.innerHTML='<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:24px">Нет данных</td></tr>';
 }
 </script>
 </body>
